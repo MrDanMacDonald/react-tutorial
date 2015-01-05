@@ -2,6 +2,7 @@
   <head>
     <title>Address History</title>
     <link type="text/css" rel="stylesheet" href="bower_components/materialize/dist/css/materialize.min.css"  media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="custom.css"/>
     <script src="http://fb.me/react-0.12.2.js"></script>
     <script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
@@ -25,8 +26,6 @@
           });
         },
         handleAddressSubmit: function(address) {
-          console.log(address)
-          console.log(this.state.data)
           var addresses = this.state.data;
           var newAddresses = addresses.concat([address]);
           this.setState({data: newAddresses});
@@ -95,23 +94,25 @@
             // Explaination for grouping adjacent elements in closing tags
             // https://groups.google.com/forum/#!topic/reactjs/qZO93BVLtKo
             return (
-              <div className="card">
-                <div className="card-content">
-                  <span className="card-title grey-text">Address</span>
-                  <div className="row">
-                    <div>
-                      <Address />
-                        {address.unit_number} - {address.street_address} {address.city} {address.province} {address.postal_code}
-                      <Address />
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <ul className="collection">
+                <li className="collection-item">
+                  <Address />
+                    {address.unit_number} - {address.street_address} {address.city} {address.province} {address.postal_code}
+                  <Address />
+                </li>
+              </ul>
             );
           });
           return (
             <div className="addressList">
-              {addressNodes}
+              <div className="card">
+                  <div className="card-content">
+                    <span className="card-title grey-text">Address</span>
+                    <div className="row">
+                      {addressNodes}
+                    </div>
+                </div>
+              </div>
             </div>
           );
         }
@@ -137,22 +138,49 @@
           return;
         },
         render: function() {
+          //Can seriously dry this form out.  See Gabe's code for reference
           return (
-            <form className="addressForm" onSubmit={this.handleSubmit}>
-              <input type="text" ref="street_address" />
-              <input type="text" ref="unit_number" />
-              <input type="text" ref="city" />
-              <input type="text" ref="province" />
-              <input type="text" ref="postal_code" />
-              <input type="submit" value="Post" />
-            </form>
+          <div className="card">
+            <div className="card-content">
+              <div className="row">
+                <form className="addressForm col s12" onSubmit={this.handleSubmit}>
+                  <div className="row">
+                    <div className="input-field col s2">
+                      <label for="unit_number">Unit</label>
+                      <input type="text" id="unit_number" ref="unit_number" />
+                    </div>
+                    <div className="input-field col s5">
+                      <label for="street_address">Street Address</label>
+                      <input type="text" id="street_address" ref="street_address" />
+                    </div>
+                    <div className="input-field col s5">
+                      <label for="city">City</label>
+                      <input type="text" id="city" ref="city" />
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="input-field col s6">
+                      <label for="province">Province</label>
+                      <input type="text" id="province" ref="province" />
+                    </div>
+                    <div className="input-field col s6">
+                      <label for="postal_code">Postal Code</label>
+                      <input type="text" id="postal_code" ref="postal_code" />
+                    </div>
+                  </div>
+                  <button className="btn waves-effect waves-light" type="submit" name="action">Submit
+                    <i class="mdi-content-send right"></i>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
           );
         }
       });
 
       var Address = React.createClass({
         render: function() {
-          // console.log(this.props)
           // var rawMarkup = converter.makeHtml(this.props.children.toString());
           return (
             <div className="address">

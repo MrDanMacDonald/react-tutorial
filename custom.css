@@ -1,0 +1,13 @@
+/*TODO: width isn't getting applied to the styling.  Need to nest elements differently or combine
+classes*/
+.addressForm {
+  max-width: 30%;
+  float: left;
+  clear: both;
+}
+
+.addressList {
+  max-width: 30%;
+  float: left;
+  clear: both;
+}
