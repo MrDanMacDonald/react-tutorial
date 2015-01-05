@@ -52,7 +52,7 @@
           //Passing the data from state down to the next component, AddressList
           return (
             <div className="addressBox">
-              <h1>Addresses</h1>
+              <h3>Address History</h3>
               <AddressList data={this.state.data} />
               <AddressForm onAddressSubmit={this.handleAddressSubmit} />
             </div>
@@ -94,25 +94,23 @@
             // Explaination for grouping adjacent elements in closing tags
             // https://groups.google.com/forum/#!topic/reactjs/qZO93BVLtKo
             return (
-              <ul className="collection">
                 <li className="collection-item">
                   <Address />
                     {address.unit_number} - {address.street_address} {address.city} {address.province} {address.postal_code}
                   <Address />
                 </li>
-              </ul>
             );
           });
           return (
-            <div className="addressList">
-              <div className="card">
-                  <div className="card-content">
-                    <span className="card-title grey-text">Address</span>
-                    <div className="row">
+            <div className="card">
+                <div className="card-content">
+                  <div className="addressList">
+                    <span className="card-title grey-text">Addresses</span>
+                    <ul className="collection">
                       {addressNodes}
-                    </div>
+                    </ul>
+                  </div>
                 </div>
-              </div>
             </div>
           );
         }
