@@ -1,18 +1,15 @@
 <html>
   <head>
     <title>Address History</title>
-<!--     <link type="text/css" rel="stylesheet" href="bower_components/materialize/dist/css/materialize.min.css"  media="screen,projection"/> -->
+    <link type="text/css" rel="stylesheet" href="bower_components/materialize/dist/css/materialize.min.css"  media="screen,projection"/>
     <script src="http://fb.me/react-0.12.2.js"></script>
     <script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-<!--     <script type="text/javascript" src="bower_components/materialize/dist/js/materialize.min.js"></script> -->
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/showdown/0.3.1/showdown.min.js"></script>
+    <script type="text/javascript" src="bower_components/materialize/dist/js/materialize.min.js"></script>
   </head>
   <body>
     <div id="content"></div>
     <script type="text/jsx">
-
-      // var converter = new Showdown.converter();
 
       var AddressBox = React.createClass({
         loadAddressesFromServer: function() {
@@ -21,7 +18,6 @@
             dataType: 'json',
             success: function(data) {
               this.setState({data: data});
-              // console.log(data);
             }.bind(this),
             error: function(xhr, status, err) {
               console.error(this.props.url, status, err.toString());
@@ -29,28 +25,29 @@
           });
         },
         handleAddressSubmit: function(address) {
-          var address = this.state.data;
+          console.log(address)
+          console.log(this.state.data)
+          var addresses = this.state.data;
           var newAddresses = addresses.concat([address]);
           this.setState({data: newAddresses});
-          $.ajax({
-            url: this.props.url,
-            dataType: 'json',
-            type: 'POST',
-            data: address,
-            success: function(data) {
-              this.setState({data: data});
-            }.bind(this),
-            error: function(xhr, status, err) {
-              console.error(this.props.url, status, err.toString());
-            }.bind(this)
-          });
+          // $.ajax({
+          //   url: this.props.url,
+          //   dataType: 'json',
+          //   type: 'POST',
+          //   data: address,
+          //   success: function(data) {
+          //     this.setState({data: data});
+          //   }.bind(this),
+          //   error: function(xhr, status, err) {
+          //     console.error(this.props.url, status, err.toString());
+          //   }.bind(this)
+          // });
         },
         getInitialState: function() {
           return {data: []};
         },
         componentDidMount: function() {
           this.loadAddressesFromServer();
-          setInterval(this.loadAddressesFromServer, this.props.pollInterval);
         },
         render: function() {
           //Passing the data from state down to the next component, AddressList
@@ -64,16 +61,51 @@
         }
       });
 
+  // render: ->
+  //   inputLabels = ['First Name', 'Middle Name', 'Last Name']
+
+  //   inputFields = _.map inputLabels, (label) =>
+  //     val = label.toLowerCase().split(' ').join('_')
+
+  //     <div key={val} className="col s12 m4 l4 input-field">
+  //       <label htmlFor={val}>
+  //         {label}
+  //       </label>
+  //       <input
+  //         type="text"
+  //         id={val}
+  //         ref={val}
+  //         defaultValue={@state.currentContact[val]}
+  //         onFocus={@handleFocus}
+  //         onBlur={@handleBlur} />
+  //     </div>
+
+  //   <div className="card">
+  //     <div className="card-content">
+  //       <span className="card-title grey-text">Vitals</span>
+  //       <div className="row">
+  //         {inputFields}
+  //       </div>
+  //     </div>
+  //   </div>
+
       var AddressList = React.createClass({
         render: function() {
           var addressNodes = this.props.data.map(function (address, index) {
             // Explaination for grouping adjacent elements in closing tags
             // https://groups.google.com/forum/#!topic/reactjs/qZO93BVLtKo
             return (
-              <div>
-                <Address />
-                  {address.unit_number} - {address.street_address} {address.city} {address.province} {address.postal_code}
-                <Address />
+              <div className="card">
+                <div className="card-content">
+                  <span className="card-title grey-text">Address</span>
+                  <div className="row">
+                    <div>
+                      <Address />
+                        {address.unit_number} - {address.street_address} {address.city} {address.province} {address.postal_code}
+                      <Address />
+                    </div>
+                  </div>
+                </div>
               </div>
             );
           });
@@ -145,7 +177,7 @@
       });
 
     React.render(
-      <AddressBox url="addresses.json" pollInterval={2000} />,
+      <AddressBox url="addresses.json"/>,
         document.getElementById('content')
       );
     </script>
