@@ -1,39 +1,42 @@
 <html>
   <head>
-    <title>Hello React</title>
+    <title>Address History</title>
+<!--     <link type="text/css" rel="stylesheet" href="bower_components/materialize/dist/css/materialize.min.css"  media="screen,projection"/> -->
     <script src="http://fb.me/react-0.12.2.js"></script>
     <script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
-    <script src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<!--     <script type="text/javascript" src="bower_components/materialize/dist/js/materialize.min.js"></script> -->
     <script src="http://cdnjs.cloudflare.com/ajax/libs/showdown/0.3.1/showdown.min.js"></script>
   </head>
   <body>
     <div id="content"></div>
     <script type="text/jsx">
 
-      var converter = new Showdown.converter();
+      // var converter = new Showdown.converter();
 
-      var CommentBox = React.createClass({
-        loadCommentsFromServer: function() {
+      var AddressBox = React.createClass({
+        loadAddressesFromServer: function() {
           $.ajax({
             url: this.props.url,
             dataType: 'json',
             success: function(data) {
               this.setState({data: data});
+              // console.log(data);
             }.bind(this),
             error: function(xhr, status, err) {
               console.error(this.props.url, status, err.toString());
             }.bind(this)
           });
         },
-        handleCommentSubmit: function(comment) {
-          var comments = this.state.data;
-          var newComments = comments.concat([comment]);
-          this.setState({data: newComments});
+        handleAddressSubmit: function(address) {
+          var address = this.state.data;
+          var newAddresses = addresses.concat([address]);
+          this.setState({data: newAddresses});
           $.ajax({
             url: this.props.url,
             dataType: 'json',
             type: 'POST',
-            data: comment,
+            data: address,
             success: function(data) {
               this.setState({data: data});
             }.bind(this),
@@ -46,77 +49,103 @@
           return {data: []};
         },
         componentDidMount: function() {
-          this.loadCommentsFromServer();
-          setInterval(this.loadCommentsFromServer, this.props.pollInterval);
+          this.loadAddressesFromServer();
+          setInterval(this.loadAddressesFromServer, this.props.pollInterval);
         },
         render: function() {
+          //Passing the data from state down to the next component, AddressList
           return (
-            <div className="commentBox">
-              <h1>Comments</h1>
-              <CommentList data={this.state.data} />
-              <CommentForm onCommentSubmit={this.handleCommentSubmit} />
+            <div className="addressBox">
+              <h1>Addresses</h1>
+              <AddressList data={this.state.data} />
+              <AddressForm onAddressSubmit={this.handleAddressSubmit} />
             </div>
           );
         }
       });
 
-      var CommentList = React.createClass({
+      var AddressList = React.createClass({
         render: function() {
-          var commentNodes = this.props.data.map(function (comment) {
+          var addressNodes = this.props.data.map(function (address, index) {
+            // Explaination for grouping adjacent elements in closing tags
+            // https://groups.google.com/forum/#!topic/reactjs/qZO93BVLtKo
             return (
-              <Comment author={comment.author}>
-                {comment.text}
-              </Comment>
+              <div>
+                <Address />
+                  {address.unit_number} - {address.street_address} {address.city} {address.province} {address.postal_code}
+                <Address />
+              </div>
             );
           });
           return (
-            <div className="commentList">
-              {commentNodes}
+            <div className="addressList">
+              {addressNodes}
             </div>
           );
         }
       });
 
-      var CommentForm = React.createClass({
+      var AddressForm = React.createClass({
         handleSubmit: function(e) {
           e.preventDefault();
-          var author = this.refs.author.getDOMNode().value.trim();
-          var text = this.refs.text.getDOMNode().value.trim();
-          if (!text || !author) {
+          var street_address = this.refs.street_address.getDOMNode().value.trim();
+          var unit_number = this.refs.unit_number.getDOMNode().value.trim();
+          var city = this.refs.city.getDOMNode().value.trim();
+          var province = this.refs.province.getDOMNode().value.trim();
+          var postal_code = this.refs.postal_code.getDOMNode().value.trim();
+          if (!street_address || !unit_number || !city || !province || !postal_code) {
             return;
           }
-          this.refs.author.getDOMNode().value = '';
-          this.refs.text.getDOMNode().value = '';
-          this.props.onCommentSubmit({author: author, text: text})
+          this.refs.street_address.getDOMNode().value = '';
+          this.refs.unit_number.getDOMNode().value = '';
+          this.refs.city.getDOMNode().value = '';
+          this.refs.province.getDOMNode().value = '';
+          this.refs.postal_code.getDOMNode().value = '';
+          this.props.onAddressSubmit({street_address: street_address, unit_number: unit_number, city: city, province: province, postal_code: postal_code})
           return;
         },
         render: function() {
           return (
-            <form className="commentForm" onSubmit={this.handleSubmit}>
-              <input type="text" placeholder="Your name" ref="author" />
-              <input type="text" placeholder="Say something..." ref="text" />
+            <form className="addressForm" onSubmit={this.handleSubmit}>
+              <input type="text" ref="street_address" />
+              <input type="text" ref="unit_number" />
+              <input type="text" ref="city" />
+              <input type="text" ref="province" />
+              <input type="text" ref="postal_code" />
               <input type="submit" value="Post" />
             </form>
           );
         }
       });
 
-      var Comment = React.createClass({
+      var Address = React.createClass({
         render: function() {
-          var rawMarkup = converter.makeHtml(this.props.children.toString());
+          // console.log(this.props)
+          // var rawMarkup = converter.makeHtml(this.props.children.toString());
           return (
-            <div className="comment">
-              <h2 className="authorName">
-                {this.props.author}
-              </h2>
-                <span dangerouslySetInnerHTML={{__html: rawMarkup}} />
+            <div className="address">
+              <span className="streetAddress">
+                {this.props.street_address}
+              </span>
+              <span className="unitNumber">
+                {this.props.unit_number}
+              </span>
+              <span className="city">
+                {this.props.city}
+              </span>
+              <span className="province">
+                {this.props.province}
+              </span>
+              <span className="postalCode">
+                {this.props.postal_code}
+              </span>
             </div>
           );
         }
       });
 
     React.render(
-      <CommentBox url="comments.json" pollInterval={2000} />,
+      <AddressBox url="addresses.json" pollInterval={2000} />,
         document.getElementById('content')
       );
     </script>
