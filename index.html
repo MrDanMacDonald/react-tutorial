@@ -1,18 +1,16 @@
 <html>
   <head>
     <title>Address History</title>
-<!--     <link type="text/css" rel="stylesheet" href="bower_components/materialize/dist/css/materialize.min.css"  media="screen,projection"/> -->
+    <link type="text/css" rel="stylesheet" href="bower_components/materialize/dist/css/materialize.min.css"  media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="custom.css"/>
     <script src="http://fb.me/react-0.12.2.js"></script>
     <script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-<!--     <script type="text/javascript" src="bower_components/materialize/dist/js/materialize.min.js"></script> -->
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/showdown/0.3.1/showdown.min.js"></script>
+    <script type="text/javascript" src="bower_components/materialize/dist/js/materialize.min.js"></script>
   </head>
   <body>
     <div id="content"></div>
     <script type="text/jsx">
-
-      // var converter = new Showdown.converter();
 
       var AddressBox = React.createClass({
         loadAddressesFromServer: function() {
@@ -21,7 +19,6 @@
             dataType: 'json',
             success: function(data) {
               this.setState({data: data});
-              // console.log(data);
             }.bind(this),
             error: function(xhr, status, err) {
               console.error(this.props.url, status, err.toString());
@@ -29,34 +26,33 @@
           });
         },
         handleAddressSubmit: function(address) {
-          var address = this.state.data;
+          var addresses = this.state.data;
           var newAddresses = addresses.concat([address]);
           this.setState({data: newAddresses});
-          $.ajax({
-            url: this.props.url,
-            dataType: 'json',
-            type: 'POST',
-            data: address,
-            success: function(data) {
-              this.setState({data: data});
-            }.bind(this),
-            error: function(xhr, status, err) {
-              console.error(this.props.url, status, err.toString());
-            }.bind(this)
-          });
+          // $.ajax({
+          //   url: this.props.url,
+          //   dataType: 'json',
+          //   type: 'POST',
+          //   data: address,
+          //   success: function(data) {
+          //     this.setState({data: data});
+          //   }.bind(this),
+          //   error: function(xhr, status, err) {
+          //     console.error(this.props.url, status, err.toString());
+          //   }.bind(this)
+          // });
         },
         getInitialState: function() {
           return {data: []};
         },
         componentDidMount: function() {
           this.loadAddressesFromServer();
-          setInterval(this.loadAddressesFromServer, this.props.pollInterval);
         },
         render: function() {
           //Passing the data from state down to the next component, AddressList
           return (
             <div className="addressBox">
-              <h1>Addresses</h1>
+              <h3>Address History</h3>
               <AddressList data={this.state.data} />
               <AddressForm onAddressSubmit={this.handleAddressSubmit} />
             </div>
@@ -64,22 +60,57 @@
         }
       });
 
+  // render: ->
+  //   inputLabels = ['First Name', 'Middle Name', 'Last Name']
+
+  //   inputFields = _.map inputLabels, (label) =>
+  //     val = label.toLowerCase().split(' ').join('_')
+
+  //     <div key={val} className="col s12 m4 l4 input-field">
+  //       <label htmlFor={val}>
+  //         {label}
+  //       </label>
+  //       <input
+  //         type="text"
+  //         id={val}
+  //         ref={val}
+  //         defaultValue={@state.currentContact[val]}
+  //         onFocus={@handleFocus}
+  //         onBlur={@handleBlur} />
+  //     </div>
+
+  //   <div className="card">
+  //     <div className="card-content">
+  //       <span className="card-title grey-text">Vitals</span>
+  //       <div className="row">
+  //         {inputFields}
+  //       </div>
+  //     </div>
+  //   </div>
+
       var AddressList = React.createClass({
         render: function() {
           var addressNodes = this.props.data.map(function (address, index) {
             // Explaination for grouping adjacent elements in closing tags
             // https://groups.google.com/forum/#!topic/reactjs/qZO93BVLtKo
             return (
-              <div>
-                <Address />
-                  {address.unit_number} - {address.street_address} {address.city} {address.province} {address.postal_code}
-                <Address />
-              </div>
+                <li className="collection-item">
+                  <Address />
+                    {address.unit_number} - {address.street_address} {address.city} {address.province} {address.postal_code}
+                  <Address />
+                </li>
             );
           });
           return (
-            <div className="addressList">
-              {addressNodes}
+            <div className="card">
+                <div className="card-content">
+                  <div className="addressList">
+                    <span className="card-title grey-text">Addresses</span>
+                    <ul className="collection">
+                      {addressNodes}
+                    </ul>
+                  </div>
+                </div>
             </div>
           );
         }
@@ -105,22 +136,49 @@
           return;
         },
         render: function() {
+          //Can seriously dry this form out.  See Gabe's code for reference
           return (
-            <form className="addressForm" onSubmit={this.handleSubmit}>
-              <input type="text" ref="street_address" />
-              <input type="text" ref="unit_number" />
-              <input type="text" ref="city" />
-              <input type="text" ref="province" />
-              <input type="text" ref="postal_code" />
-              <input type="submit" value="Post" />
-            </form>
+          <div className="card">
+            <div className="card-content">
+              <div className="row">
+                <form className="addressForm col s12" onSubmit={this.handleSubmit}>
+                  <div className="row">
+                    <div className="input-field col s2">
+                      <label for="unit_number">Unit</label>
+                      <input type="text" id="unit_number" ref="unit_number" />
+                    </div>
+                    <div className="input-field col s5">
+                      <label for="street_address">Street Address</label>
+                      <input type="text" id="street_address" ref="street_address" />
+                    </div>
+                    <div className="input-field col s5">
+                      <label for="city">City</label>
+                      <input type="text" id="city" ref="city" />
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="input-field col s6">
+                      <label for="province">Province</label>
+                      <input type="text" id="province" ref="province" />
+                    </div>
+                    <div className="input-field col s6">
+                      <label for="postal_code">Postal Code</label>
+                      <input type="text" id="postal_code" ref="postal_code" />
+                    </div>
+                  </div>
+                  <button className="btn waves-effect waves-light" type="submit" name="action">Submit
+                    <i class="mdi-content-send right"></i>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
           );
         }
       });
 
       var Address = React.createClass({
         render: function() {
-          // console.log(this.props)
           // var rawMarkup = converter.makeHtml(this.props.children.toString());
           return (
             <div className="address">
@@ -145,7 +203,7 @@
       });
 
     React.render(
-      <AddressBox url="addresses.json" pollInterval={2000} />,
+      <AddressBox url="addresses.json"/>,
         document.getElementById('content')
       );
     </script>
