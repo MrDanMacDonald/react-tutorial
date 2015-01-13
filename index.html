@@ -13,12 +13,10 @@
   <body>
     <div id="content"></div>
     <script type="text/jsx">
-
       var AnswerMultipleChoiceQuestion = React.createClass({
         propTypes: {
           value: React.PropTypes.string,
-          choices: React.PropTypes.array.isRequired,
-          onCompleted: React.PropTypes.func.isRequired
+          choices: React.PropTypes.string.isRequired
         },
         getInitialState: function () {
           return {
@@ -26,26 +24,26 @@
             value: this.props.value
           };
         },
-        renderChoices: function () {
-          return this.props.choices.map(function(choice, i) {
+        renderChoices: function() {
+          var arrayOfChoices = this.props.choices.split(',')
+          return arrayOfChoices.map(function(choice, i) {
             return <AnswerRadioInput
-              id={"choice-" + i}
+              key={"choice-" + i}
               name={this.state.id}
               label={choice}
               value={choice}
-              checked={this.state.value === choice} />
+              checked={this.state.value === choice}
+              onChanged={this.handleChanged} />
           }.bind(this));
         },
-        render: function () {
-          return (
-            <div className='form-group'>
-              <label className='survey-item-label' htmlFor={this.state.id}>
-                {this.props.label}
-              </label>
-              <div className='survey-item-content'>
+        render: function() {
+        return (
+          <div className="form-group">
+            <label className="survey-item-label" htmlFor={this.state.id}>{this.props.label}</label>
+            <div className="survey-item-content">
                 {this.renderChoices()}
-              </div>
             </div>
+          </div>
           );
         }
       });
@@ -85,7 +83,6 @@
           );
         }
       });
-
       React.render(
         <AnswerMultipleChoiceQuestion choices="['blue', 'green', 'yellow']" />,
           document.getElementById("content")
