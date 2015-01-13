@@ -16,7 +16,8 @@
       var AnswerMultipleChoiceQuestion = React.createClass({
         propTypes: {
           value: React.PropTypes.string,
-          choices: React.PropTypes.string.isRequired
+          choices: React.PropTypes.string.isRequired,
+          onCompleted: React.PropTypes.func.isRequired
         },
         getInitialState: function () {
           return {
@@ -24,11 +25,16 @@
             value: this.props.value
           };
         },
+        handleChanged: function (value) {
+          this.setState({value: value});
+          this.props.onCompleted(value);
+        },
         renderChoices: function() {
           var arrayOfChoices = this.props.choices.split(',')
+          console.log(arrayOfChoices)
           return arrayOfChoices.map(function(choice, i) {
             return <AnswerRadioInput
-              key={"choice-" + i}
+              id={"choice-" + i}
               name={this.state.id}
               label={choice}
               value={choice}
@@ -50,11 +56,19 @@
 
       var AnswerRadioInput = React.createClass({
         propTypes: {
-          id: React.PropTypes.string,
+          key: React.PropTypes.string,
           name: React.PropTypes.string.isRequired,
           label: React.PropTypes.string.isRequired,
           value: React.PropTypes.string.isRequired,
-          checked: React.PropTypes.bool
+          checked: React.PropTypes.bool,
+          onChanged: React.PropTypes.func.isRequired
+        },
+        handleChanged: function (e) {
+          var checked = e.target.checked;
+          this.setState({checked: checked});
+          if (checked) {
+            this.props.onChanged(this.props.value);
+          }
         },
         getDefaultProps: function () {
           return {
@@ -66,7 +80,8 @@
           var id = this.props.id ? this.props.id : _.uniqueId('radio-');
           return {
             checked: !!this.props.checked,
-            id: id
+            id: id,
+            name: id
           };
         },
         render: function () {
@@ -84,7 +99,7 @@
         }
       });
       React.render(
-        <AnswerMultipleChoiceQuestion choices="['blue', 'green', 'yellow']" />,
+        <AnswerMultipleChoiceQuestion choices="blue, green, yellow" />,
           document.getElementById("content")
         );
     </script>
