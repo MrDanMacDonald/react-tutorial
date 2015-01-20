@@ -43,14 +43,14 @@
           }.bind(this));
         },
         render: function() {
-        return (
-          <div className="form-group">
-            <label className="survey-item-label" htmlFor={this.state.id}>{this.props.label}</label>
-            <div className="survey-item-content">
-                {this.renderChoices()}
+          return (
+            <div className="form-group">
+              <label className="survey-item-label" htmlFor={this.state.id}>{this.props.label}</label>
+              <div className="survey-item-content">
+                  {this.renderChoices()}
+              </div>
             </div>
-          </div>
-          );
+            );
         }
       });
 
