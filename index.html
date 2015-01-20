@@ -49,7 +49,6 @@
           this.loadAddressesFromServer();
         },
         render: function() {
-          //Passing the data from state down to the next component, AddressList
           return (
             <div className="addressBox">
               <h3>Address History</h3>
@@ -60,42 +59,25 @@
         }
       });
 
-  // render: ->
-  //   inputLabels = ['First Name', 'Middle Name', 'Last Name']
-
-  //   inputFields = _.map inputLabels, (label) =>
-  //     val = label.toLowerCase().split(' ').join('_')
-
-  //     <div key={val} className="col s12 m4 l4 input-field">
-  //       <label htmlFor={val}>
-  //         {label}
-  //       </label>
-  //       <input
-  //         type="text"
-  //         id={val}
-  //         ref={val}
-  //         defaultValue={@state.currentContact[val]}
-  //         onFocus={@handleFocus}
-  //         onBlur={@handleBlur} />
-  //     </div>
-
-  //   <div className="card">
-  //     <div className="card-content">
-  //       <span className="card-title grey-text">Vitals</span>
-  //       <div className="row">
-  //         {inputFields}
-  //       </div>
-  //     </div>
-  //   </div>
-
       var AddressList = React.createClass({
+        getInitialState: function() {
+          return ({
+            data: null
+          })
+        },
+        handleClicked: function(addressObj) {
+          var addresses = this.props.data;
+          var index = addresses.indexOf(addressObj);
+          if (index > -1) {
+            array.splice(index, 1)
+          };
+          this.setState({data: addresses})
+        },
         render: function() {
           var addressNodes = this.props.data.map(function (address, index) {
-            // Explaination for grouping adjacent elements in closing tags
-            // https://groups.google.com/forum/#!topic/reactjs/qZO93BVLtKo
             return (
                 <li className="collection-item">
-                  <Address />
+                  <Address onClick={this.handleClicked} />
                     {address.unit_number} - {address.street_address} {address.city} {address.province} {address.postal_code}
                   <Address />
                 </li>
@@ -136,7 +118,6 @@
           return;
         },
         render: function() {
-          //Can seriously dry this form out.  See Gabe's code for reference
           return (
           <div className="card">
             <div className="card-content">
@@ -178,8 +159,11 @@
       });
 
       var Address = React.createClass({
+        handleClicked: function() {
+          debugger
+          this.props.onClick(this);
+        },
         render: function() {
-          // var rawMarkup = converter.makeHtml(this.props.children.toString());
           return (
             <div className="address">
               <span className="streetAddress">
@@ -197,6 +181,7 @@
               <span className="postalCode">
                 {this.props.postal_code}
               </span>
+              <button type="button" onClick={this.handleClicked.bind(this)}>Delete</button>
             </div>
           );
         }
