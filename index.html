@@ -29,18 +29,6 @@
           var addresses = this.state.data;
           var newAddresses = addresses.concat([address]);
           this.setState({data: newAddresses});
-          // $.ajax({
-          //   url: this.props.url,
-          //   dataType: 'json',
-          //   type: 'POST',
-          //   data: address,
-          //   success: function(data) {
-          //     this.setState({data: data});
-          //   }.bind(this),
-          //   error: function(xhr, status, err) {
-          //     console.error(this.props.url, status, err.toString());
-          //   }.bind(this)
-          // });
         },
         getInitialState: function() {
           return {data: []};
@@ -67,20 +55,26 @@
         },
         handleClicked: function(addressObj) {
           var addresses = this.props.data;
-          var index = addresses.indexOf(addressObj);
+          var address = {'street_address': addressObj.props.street_address, 'unit_number': addressObj.props.unit_number, 'city': addressObj.props.city, 'province': addressObj.props.province, 'postal_code': addressObj.props.postal_code};
+          var index = addresses.map(function(address) {return address.street_address}).indexOf(address.street_address);
           if (index > -1) {
-            array.splice(index, 1)
+            addresses.splice(index, 1)
           };
           this.setState({data: addresses})
         },
         render: function() {
-          var addressNodes = this.props.data.map(function (address, index) {
+          var addressListObj = this
+          var addressNodes = this.props.data.map(function(address, index) {
             return (
-                <li className="collection-item">
-                  <Address onClick={this.handleClicked} />
-                    {address.unit_number} - {address.street_address} {address.city} {address.province} {address.postal_code}
-                  <Address />
-                </li>
+              <li className="collection-item">
+                <Address
+                  unit_number={address.unit_number}
+                  street_address={address.street_address}
+                  city={address.city}
+                  province={address.province}
+                  postal_code={address.postal_code}
+                  onClick={addressListObj.handleClicked} />
+              </li>
             );
           });
           return (
@@ -119,69 +113,64 @@
         },
         render: function() {
           return (
-          <div className="card">
-            <div className="card-content">
-              <div className="row">
-                <form className="addressForm col s12" onSubmit={this.handleSubmit}>
-                  <div className="row">
-                    <div className="input-field col s2">
-                      <label for="unit_number">Unit</label>
-                      <input type="text" id="unit_number" ref="unit_number" />
+            <div className="card">
+              <div className="card-content">
+                <div className="row">
+                  <form className="addressForm col s12" onSubmit={this.handleSubmit}>
+                    <div className="row">
+                      <div className="input-field col s2">
+                        <label htmlFor="unit_number">Unit</label>
+                        <input type="text" id="unit_number" ref="unit_number" />
+                      </div>
+                      <div className="input-field col s5">
+                        <label htmlFor="street_address">Street Address</label>
+                        <input type="text" id="street_address" ref="street_address" />
+                      </div>
+                      <div className="input-field col s5">
+                        <label htmlFor="city">City</label>
+                        <input type="text" id="city" ref="city" />
+                      </div>
                     </div>
-                    <div className="input-field col s5">
-                      <label for="street_address">Street Address</label>
-                      <input type="text" id="street_address" ref="street_address" />
+                    <div className="row">
+                      <div className="input-field col s6">
+                        <label htmlFor="province">Province</label>
+                        <input type="text" id="province" ref="province" />
+                      </div>
+                      <div className="input-field col s6">
+                        <label htmlFor="postal_code">Postal Code</label>
+                        <input type="text" id="postal_code" ref="postal_code" />
+                      </div>
                     </div>
-                    <div className="input-field col s5">
-                      <label for="city">City</label>
-                      <input type="text" id="city" ref="city" />
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="input-field col s6">
-                      <label for="province">Province</label>
-                      <input type="text" id="province" ref="province" />
-                    </div>
-                    <div className="input-field col s6">
-                      <label for="postal_code">Postal Code</label>
-                      <input type="text" id="postal_code" ref="postal_code" />
-                    </div>
-                  </div>
-                  <button className="btn waves-effect waves-light" type="submit" name="action">Submit
-                    <i class="mdi-content-send right"></i>
-                  </button>
-                </form>
+                    <button className="btn waves-effect waves-light" type="submit" name="action">Submit
+                      <i className="mdi-content-send right"></i>
+                    </button>
+                  </form>
+                </div>
               </div>
             </div>
-          </div>
           );
         }
       });
 
       var Address = React.createClass({
+        propTypes: {
+          unit_number: React.PropTypes.string.isRequired,
+          street_address: React.PropTypes.string.isRequired,
+          city: React.PropTypes.string.isRequired,
+          province: React.PropTypes.string.isRequired,
+          postal_code: React.PropTypes.string.isRequired,
+          onClick: React.PropTypes.func.isRequired
+        },
         handleClicked: function() {
-          debugger
           this.props.onClick(this);
         },
         render: function() {
           return (
-            <div className="address">
-              <span className="streetAddress">
-                {this.props.street_address}
-              </span>
-              <span className="unitNumber">
-                {this.props.unit_number}
-              </span>
-              <span className="city">
-                {this.props.city}
-              </span>
-              <span className="province">
-                {this.props.province}
-              </span>
-              <span className="postalCode">
-                {this.props.postal_code}
-              </span>
-              <button type="button" onClick={this.handleClicked.bind(this)}>Delete</button>
+            <div>
+              <div className="address">
+                {this.props.unit_number} - {this.props.street_address} {this.props.city} {this.props.province} {this.props.postal_code}
+              </div>
+              <a className="btn-floating btn-large waves-effect waves-light red" onClick={this.handleClicked.bind(this)}><i className="mdi-content-remove"></i></a>
             </div>
           );
         }
