@@ -55,8 +55,8 @@
         },
         handleClicked: function(addressObj) {
           var addresses = this.props.data;
-          var address = {'street_address': addressObj.props.street_address, 'unit_number': addressObj.props.unit_number, 'city': addressObj.props.city, 'province': addressObj.props.province, 'postal_code': addressObj.props.postal_code};
-          var index = addresses.map(function(address) {return address.street_address}).indexOf(address.street_address);
+          var address = addressObj.props.address
+          var index = addresses.indexOf(address);
           if (index > -1) {
             addresses.splice(index, 1)
           };
@@ -68,11 +68,7 @@
             return (
               <li className="collection-item">
                 <Address
-                  unit_number={address.unit_number}
-                  street_address={address.street_address}
-                  city={address.city}
-                  province={address.province}
-                  postal_code={address.postal_code}
+                  address={address}
                   onClick={addressListObj.handleClicked} />
               </li>
             );
@@ -154,11 +150,7 @@
 
       var Address = React.createClass({
         propTypes: {
-          unit_number: React.PropTypes.string.isRequired,
-          street_address: React.PropTypes.string.isRequired,
-          city: React.PropTypes.string.isRequired,
-          province: React.PropTypes.string.isRequired,
-          postal_code: React.PropTypes.string.isRequired,
+          address: React.PropTypes.object.isRequired,
           onClick: React.PropTypes.func.isRequired
         },
         handleClicked: function() {
@@ -168,7 +160,7 @@
           return (
             <div>
               <div className="address">
-                {this.props.unit_number} - {this.props.street_address} {this.props.city} {this.props.province} {this.props.postal_code}
+                {this.props.address.unit_number} - {this.props.address.street_address}, {this.props.address.city}, {this.props.address.province}, {this.props.address.postal_code}
               </div>
               <a className="btn-floating btn-large waves-effect waves-light red" onClick={this.handleClicked.bind(this)}><i className="mdi-content-remove"></i></a>
             </div>
